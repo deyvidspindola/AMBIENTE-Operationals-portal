@@ -1,0 +1,20 @@
+version: "3.7"
+services:
+  app:
+    environment:
+      - APP_DEBUG_MODE=True
+      - APP_TEST_MODE=False
+    container_name: ws_portal_internacional
+    image: ws_portal_internacional:dev
+    build:
+      context: ./resources
+      args:
+        - IMAGE_DESCRIPTION=WS Portal, development image
+    ports:
+      - 80:80
+    volumes:
+      - ./app:/var/www/html/portal/
+      - ./resources/entrypoint.sh:/tmp/entrypoint.sh:ro
+      - ./resources/apache/000-default.conf:/etc/apache2/sites-enabled/000-default.conf
+      - ./resources/php/php.ini:/etc/php/7.4/cli/php.ini
+      - ./resources/html:/var/www/html/
