@@ -1,20 +1,18 @@
 version: "3.7"
+
 services:
+
   portal:
-    environment:
-      - APP_DEBUG_MODE=True
-      - APP_TEST_MODE=False
-    container_name: ws_portal_internacional
-    image: ws_portal_internacional:dev
+    container_name: operational_portal
     build:
       context: ./resources
-      args:
-        - IMAGE_DESCRIPTION=WS Portal internacional, development image
     ports:
       - 80:80
     volumes:
       - ./portal:/var/www/html/portal/
+      - ./resources/portal/TranslationsModel.php:/var/www/html/portal/application/models/TranslationsModel.php
+      - ./resources/portal/conf.json:/var/www/html/portal/conf.json
       - ./portal_servicos:/var/www/html/portal_servicos/
-      - ./resources/entrypoint.sh:/tmp/entrypoint.sh:ro
-      - ./resources/apache/000-default.conf:/etc/apache2/sites-enabled/000-default.conf
-      - ./resources/php/php.ini:/etc/php/7.2/cli/php.ini
+      - ./resources/html/index.php:/var/www/html/index.php
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

@@ -12,4 +12,4 @@ logs:
 
 .PHONY: bash
 bash:
-	docker exec -ti ws_portal_internacional bash
+	docker exec -ti operational_portal bash

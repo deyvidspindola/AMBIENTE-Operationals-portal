@@ -1,21 +1,22 @@
-FROM ubuntu:20.04
+FROM php:7.2-apache
 
-WORKDIR /var/www/html
+WORKDIR /app
 
-ARG IMAGE_DESCRIPTION
+RUN apt update
 
-LABEL Description=${IMAGE_DESCRIPTION}
+RUN apt install -y git libzip-dev zip && \ 
+    docker-php-ext-install zip mysqli pdo pdo_mysql && \
+    docker-php-ext-enable pdo_mysql
 
-# Update the system and install required packages
-RUN ln -fs /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime && \
-apt-get update && \
-apt-get upgrade -y && \
-apt-get install -y apache2 curl zip unzip software-properties-common \
-    && add-apt-repository -y ppa:ondrej/php \
-    && apt-get install -y php7.2-cli libapache2-mod-php7.2 php7.2-soap php7.2-xml php7.2-curl php-memcached php7.2-dev php7.2-sqlite3 php7.2-mbstring php7.2-gd php7.2-json php7.2-xdebug && \
-a2enmod rewrite && \
-apt-get autoremove -y && apt-get clean
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-COPY ./xdebug.ini /etc/php/7.2/mods-available/xdebug.ini
+RUN a2enmod rewrite
 
-ENTRYPOINT ["/tmp/entrypoint.sh"]
+RUN rm -rf /var/www/html && \
+    ln -s /app /var/www/html
+
+RUN pecl install xdebug && docker-php-ext-enable xdebug
+
+RUN echo "xdebug.mode=off" | tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini > /dev/null && \
+    echo "xdebug.start_with_request=yes" | tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini > /dev/null && \
+    echo "xdebug.client_host=host.docker.internal" | tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini > /dev/null
