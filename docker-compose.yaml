@@ -11,6 +11,7 @@ services:
     volumes:
       - ./portal:/var/www/html/portal/
       - ./resources/portal/TranslationsModel.php:/var/www/html/portal/application/models/TranslationsModel.php
+      - ./resources/portal/MY_Controller.php:/var/www/html/portal/application/core/MY_Controller.php
       - ./resources/portal/conf.json:/var/www/html/portal/conf.json
       - ./portal_servicos:/var/www/html/portal_servicos/
       - ./resources/html/index.php:/var/www/html/index.php
